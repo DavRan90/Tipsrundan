@@ -5,25 +5,29 @@ const url = "https://opentdb.com/api.php?amount=10&category=12&difficulty=medium
 const quiz = document.getElementById("quiz")
 const qFound = document.getElementById("q")
 const aCorr = document.getElementById("a")
+const distanceToNextQuestion = document.getElementById("distanceToNext")
+const directionToNextQuestion = document.getElementById("directionToNext")
 
 let questionCount = 0
 let correctAnswers = 0
 
 const pos0 = {name: "Storgatan", lat: 59.090979024161264, lon: 17.5648019558512}
-const pos1 = {name: "London", lat: 51.507351, lon: -0.127758}
-const pos2 = {name: "Berlin", lat: 52.520007, lon: 13.404954}
-const pos3 = {name: "San Francisco", lat: 37.774929, lon: -122.419416}
-const pos4 = {name: "Shanghai", lat: 31.230416, lon: 121.473701}
-const pos5 = {name: "Tokyo", lat: 35.689487, lon: 139.691706}
-const pos6 = {name: "Sao Paulo", lat: -23.55052, lon: -46.633309}
-const pos7 = {name: "Mumbai", lat: 19.075984, lon: 72.877656}
-const pos8 = {name: "Mountain View", lat: 37.386052, lon: -122.083851}
-const pos9 = {name: "Moscow", lat: 55.755826, lon: 37.6173}
+const pos1 = {name: "Berlin", lat: 52.520007, lon: 13.404954}
+const pos2 = {name: "London", lat: 51.507351, lon: -0.127758}
+const pos3 = {name: "Moscow", lat: 55.755826, lon: 37.6173}
+const pos4 = {name: "Mountain View", lat: 37.386052, lon: -122.083851}
+const pos5 = {name: "Mumbai", lat: 19.075984, lon: 72.877656}
+const pos6 = {name: "San Francisco", lat: 37.774929, lon: -122.419416}
+const pos7 = {name: "Shanghai", lat: 31.230416, lon: 121.473701}
+const pos8 = {name: "Sao Paulo", lat: -23.55052, lon: -46.633309}
+const pos9 = {name: "Tokyo", lat: 35.689487, lon: 139.691706}
+
+
 const positions = [pos0, pos1, pos2, pos3, pos4, pos5, pos6, pos7, pos8, pos9]
 
 let results = []
 
-geoFindMe()
+setInterval(geoFindMe, 10000)
 
 
 fetch(url)
@@ -116,7 +120,6 @@ function answer(outcome, index)
                 console.log("Correct")
                 correctAnswers++
                 aCorr.innerHTML = "Correct answers: " + correctAnswers
-                /* alert("Correct answer") */
                 setTimeout(delQForm, 2000) 
                 
             }
@@ -125,21 +128,18 @@ function answer(outcome, index)
                 let selected = document.getElementById(index)
                 selected.setAttribute("class", "wrong")
                 console.log("Wrong")
-                /* alert("Wrong answer") */
                 setTimeout(delQForm, 2000) 
             }
         }       
 
 function geoFindMe()
 {
-    /* alert("Försöker hitta...") */
     if(!navigator.geolocation)
     {
         alert("Du har ingen GPS-funktion")
     }
     else
     {
-        /* alert("Letar...") */
         console.log("Comparing GPS-position")
         navigator.geolocation.getCurrentPosition(funkar, fel)
     }
@@ -163,7 +163,31 @@ function geoFindMe()
                     qFound.innerHTML = "Questions found: " + questionCount
                     console.log("Creating question")
                     results[i].type = "Shown"
+                    if(i+1 < positions.length)
+                        {
+                            let distToNext = getDistance(latitude, longitude, positions[i+1].lat, positions[i+1].lon, "K")
+                            distanceToNextQuestion.innerHTML = "Distance to next question: " + distToNext.toFixed(2) + "km"
+                            let direction = ""
+                            if(longitude > positions[i+1].lon)
+                            {
+                                direction = "South "
+                            }
+                            else
+                            {
+                                direction = "North "
+                            }
+                            if(latitude > positions[i+1].lat)
+                                {
+                                    direction += "+ West"
+                                }
+                                else
+                                {
+                                    direction += "+ East"
+                                }
+                            directionToNextQuestion.innerHTML = "Direction to next question is: " + direction
+                        }
                     createQuestion(i);
+                    
                 }
         }
     }
@@ -206,6 +230,7 @@ function geoFindMe()
 
 function quit()
 {
+    clearInterval()
     qFound.innerHTML = "You found " + questionCount + " out of " + results.length + " questions"
     aCorr.innerHTML = "You ended up getting " + correctAnswers + " correct answers"
     let playButton = document.getElementById("findme")
