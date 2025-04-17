@@ -27,7 +27,7 @@ const positions = [pos0, pos1, pos2, pos3, pos4, pos5, pos6, pos7, pos8, pos9]
 
 let results = []
 
-setInterval(geoFindMe, 10000)
+myInterval = setInterval(geoFindMe, 3000)
 
 
 fetch(url)
@@ -48,7 +48,7 @@ fetch(url)
     .catch(function(error){
         console.log("Något gick fel: " + error)
     })
-
+    
 function createQuestion(index)
 {
     q = results[index]
@@ -112,6 +112,7 @@ function delQForm()
 
 function answer(outcome, index)
         {
+            
             console.log(outcome)
             if(outcome == true)
             {
@@ -130,6 +131,7 @@ function answer(outcome, index)
                 console.log("Wrong")
                 setTimeout(delQForm, 2000) 
             }
+            myInterval = setInterval(geoFindMe, 3000)
         }       
 
 function geoFindMe()
@@ -159,6 +161,7 @@ function geoFindMe()
             let distance = getDistance(latitude, longitude, positions[i].lat, positions[i].lon, "K")
             if(distance < 20 && results[i].type != "Shown")
                 {
+                    clearInterval(myInterval)
                     questionCount++
                     qFound.innerHTML = "Questions found: " + questionCount
                     console.log("Creating question")
@@ -187,7 +190,6 @@ function geoFindMe()
                             directionToNextQuestion.innerHTML = "Direction to next question is: " + direction
                         }
                     createQuestion(i);
-                    
                 }
         }
     }
@@ -230,7 +232,7 @@ function geoFindMe()
 
 function quit()
 {
-    clearInterval()
+    clearInterval(myInterval)
     qFound.innerHTML = "You found " + questionCount + " out of " + results.length + " questions"
     aCorr.innerHTML = "You ended up getting " + correctAnswers + " correct answers"
     let playButton = document.getElementById("findme")
