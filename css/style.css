@@ -4,6 +4,7 @@
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     /* border-style: solid; */
 }
+
 p
 {
     margin: 1em;
@@ -95,6 +96,11 @@ p
         margin: 1em;
 
     }
+    .main
+{
+    position: relative;
+    left: 35vw
+}
 }
 
 .qForm img

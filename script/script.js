@@ -131,7 +131,16 @@ function answer(outcome, index)
                 console.log("Wrong")
                 setTimeout(delQForm, 2000) 
             }
-            myInterval = setInterval(geoFindMe, 3000)
+            if(questionCount == 10)
+            {
+                quit()
+            }
+            else
+            {
+                myInterval = setInterval(geoFindMe, 3000)
+            }
+            
+
         }       
 
 function geoFindMe()
@@ -237,4 +246,9 @@ function quit()
     aCorr.innerHTML = "You ended up getting " + correctAnswers + " correct answers"
     let playButton = document.getElementById("findme")
     playButton.setAttribute("class", "hidden")
+    let giveUpButton = document.getElementById("quit")
+    giveUpButton.setAttribute("class", "hidden")
+    distanceToNextQuestion.innerHTML = ""
+    directionToNextQuestion.innerHTML = ""
+    delQForm()
 }
